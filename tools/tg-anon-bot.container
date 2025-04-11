@@ -1,0 +1,16 @@
+# cat ~/.config/containers/systemd/tg-anon-bot.container 
+[Unit]
+Description=Telegram Anonymous Bot Container Prod
+After=network.target
+
+[Container]
+Image=localhost/tg-anon-bot
+ContainerName=tg_anon_bot
+EnvironmentFile=/home/yourusername/tg-anon-cry-out-bot/.env
+#PublishPort=8080:8080
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

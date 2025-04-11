@@ -1,0 +1,32 @@
+# Binaries
+bot
+*.exe
+*.out
+
+# Build & dependency directories
+/build/
+vendor/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+
+# Environment & config
+.env
+.env.*
+
+# Logs
+*.log
+
+# Docker
+*.local
+*.pid
+docker-compose.override.yml
+
+# Git
+*.orig

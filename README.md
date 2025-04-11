@@ -30,11 +30,11 @@ This is a Telegram bot for publishing anonymous messages from Russian-speaking u
 1. Create an .env file with environment variables:
 
    ```bash
-   TELEGRAM_BOT_TOKEN="your_telegram_bot_token"
-   TELEGRAM_BOT_CHANNEL_NAME="@your_channel_name"
-   OPENAI_API_KEY="your_openai_api_key"
-   WEBHOOK_URL="your_webhook_url"  # leave empty for polling mode
-   OPENAI_PROMPT="Проверь, соответствует ли сообщение следующим критериям: написано преимущественно на русском языке, не содержит грубых ругательств (допускаются слова с символами '*'), а цель сообщения — пожаловаться, выплакаться, выговориться публично. Ответь только 'да' или 'нет'. Сообщение:"
+   TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+   TELEGRAM_BOT_CHANNEL_NAME=@your_channel_name
+   OPENAI_API_KEY=your_openai_api_key
+   WEBHOOK_URL=your_webhook_url  # leave empty for polling mode
+   OPENAI_PROMPT=Проверь, соответствует ли сообщение следующим критериям: написано преимущественно на русском языке, не содержит грубых ругательств (допускаются слова с символами '*'), а цель сообщения — пожаловаться, выплакаться, выговориться публично. Ответь только 'да' или 'нет'. Сообщение:
    ```
 
 1. Build and run the Docker container:

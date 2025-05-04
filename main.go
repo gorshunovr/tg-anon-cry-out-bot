@@ -11,6 +11,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -26,11 +27,22 @@ import (
 )
 
 var (
-	userLastMessageTime = make(map[int]time.Time)
-	userLastMessage     = make(map[int]string)
-	mu                  sync.Mutex
-	rateLimitDuration   = 20 * time.Minute
+	userLastMessageTime   = make(map[int]time.Time)
+	userLastMessage       = make(map[int]string)
+	mu                    sync.Mutex
+	rateLimitDuration     = getRateLimitDuration()
+	rateLimitDurationMins = int(rateLimitDuration.Minutes())
 )
+
+func getRateLimitDuration() time.Duration {
+	if val := os.Getenv("RATE_LIMIT_DURATION"); val != "" {
+		if mins, err := strconv.Atoi(val); err == nil {
+			return time.Duration(mins) * time.Minute
+		}
+		log.Printf("Invalid RATE_LIMIT_DURATION value: %s", val)
+	}
+	return 20 * time.Minute
+}
 
 func verifyMessageWithOpenAI(client *openai.Client, message string) (bool, string, error) {
 	prompt := os.Getenv("OPENAI_PROMPT")
@@ -52,6 +64,21 @@ func verifyMessageWithOpenAI(client *openai.Client, message string) (bool, strin
 
 	answer := strings.ToLower(strings.TrimSpace(resp.Choices[0].Message.Content))
 	return answer == "да", answer, nil
+}
+
+// rateLimitMsg returns a correctly inflected rate‐limit message for n minutes.
+func rateLimitMsg(n int) string {
+	// choose the right word form for “минута”
+	var unit string
+	switch {
+	case n%10 == 1 && n%100 != 11:
+		unit = "минуту"
+	case n%10 >= 2 && n%10 <= 4 && (n%100 < 10 || n%100 >= 20):
+		unit = "минуты"
+	default:
+		unit = "минут"
+	}
+	return fmt.Sprintf("⏳ Вы можете отправлять одно сообщение раз в %d %s.", n, unit)
 }
 
 func main() {
@@ -140,8 +167,8 @@ func processUpdates(ctx context.Context, bot *tgbotapi.BotAPI, openaiClient *ope
 			lastMsg := userLastMessage[userID]
 			if exists && time.Since(lastTime) < rateLimitDuration {
 				mu.Unlock()
-				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "⏳ Вы можете отправлять одно сообщение раз в 20 минут."))
-				log.Printf("UserID: %d, Username: %s, Msg: '%s', User error: RateLimited message", userID, update.Message.From.UserName, userMessage)
+				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, rateLimitMsg(rateLimitDurationMins)))
+				log.Printf("UserID: %d, Username: %s, Msg: '%s', rateLimitDurationMins: '%d', User error: RateLimited message", userID, update.Message.From.UserName, userMessage, rateLimitDurationMins)
 				continue
 			}
 			if lastMsg == userMessage {

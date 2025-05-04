@@ -11,7 +11,7 @@ This is a Telegram bot for publishing anonymous messages from Russian-speaking u
 - 📜 Checks compliance with posting rules (in Russian, no harsh swearing, etc.)
 - 📢 Publishes to the specified Telegram channel
 - 🔗 Replies to the user with a direct link to the published message
-- ⏳ Rate limiting (1 message per user per 20 min)
+- ⏳ Customizable rate limiting (1 message per user per 20 min by default)
 - 📛 Deduplication (prevents duplicate messages)
 - 🔗 Supports polling and webhook modes
 - 🔄 Implements handling for SIGINT/SIGTERM signals to allow graceful shutdowns
@@ -35,6 +35,7 @@ This is a Telegram bot for publishing anonymous messages from Russian-speaking u
    OPENAI_API_KEY=your_openai_api_key
    WEBHOOK_URL=your_webhook_url  # leave empty for polling mode
    OPENAI_PROMPT=Проверь, соответствует ли сообщение следующим критериям: написано преимущественно на русском языке, не содержит грубых ругательств (допускаются слова с символами '*'), а цель сообщения — пожаловаться, выплакаться, выговориться публично. Ответь только 'да' или 'нет'. Сообщение:
+   RATE_LIMIT_DURATION=20
    ```
 
 1. Build and run the Docker container:
